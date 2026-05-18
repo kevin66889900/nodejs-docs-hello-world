@@ -1,0 +1,23 @@
+agents:
+  root:
+    model: openai/gpt-5-mini # Change to the model that you want to use
+    description: Bug investigator
+    instruction: |
+      Analyze error messages, stack traces, and code to find bug root causes.
+      Explain what's wrong and why it's happening.
+      Delegate fix implementation to the fixer agent.
+    sub_agents: [fixer]
+    toolsets:
+      - type: filesystem
+      - type: mcp
+        ref: docker:duckduckgo
+
+  fixer:
+    model: anthropic/claude-sonnet-4-5 # Change to the model that you want to use
+    description: Fix implementer
+    instruction: |
+      Write fixes for bugs diagnosed by the investigator.
+      Make minimal, targeted changes and add tests to prevent regression.
+    toolsets:
+      - type: filesystem
+      - type: shell
